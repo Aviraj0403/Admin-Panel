@@ -5,7 +5,7 @@ import React, {
   useContext,
   useCallback,
 } from "react";
-import axios from "axios";
+import axios from "../utils/Axios"; // ✅ Custom Axios instance
 import Cookies from "js-cookie";
 
 // Create Context
@@ -13,9 +13,6 @@ const AuthContext = createContext(null);
 
 // ✅ Custom Hook for easy consumption
 export const useAuth = () => useContext(AuthContext);
-
-// Base URL for auth API
-const BASE_URL = "http://localhost:5005/v1/api/auth";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -30,7 +27,7 @@ const AuthProvider = ({ children }) => {
     }
 
     try {
-      const res = await axios.get(`${BASE_URL}/me`, {
+      const res = await axios.get("/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data.user);
@@ -49,7 +46,7 @@ const AuthProvider = ({ children }) => {
   // ✅ Login Function
   const login = async (credentials) => {
     try {
-      const res = await axios.post(`${BASE_URL}/signIn`, credentials);
+      const res = await axios.post("/auth/signIn", credentials);
       const { userData, token } = res.data;
 
       // Save tokens securely

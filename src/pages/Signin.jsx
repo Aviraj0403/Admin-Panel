@@ -46,7 +46,7 @@ export default function Signin() {
       setMessage({ type: "success", text: "Welcome! Redirecting..." });
 
       // Redirect after short delay
-      setTimeout(() => navigate("/admin/home"), 1200); // You can make this dynamic based on role
+      setTimeout(() => navigate("/admin/dashboard"), 1200); // You can make this dynamic based on role
     } else {
       setMessage({
         type: "error",

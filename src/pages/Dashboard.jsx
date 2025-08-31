@@ -8,9 +8,9 @@ export default function Dashboard() {
       <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-72 h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
 
       {/* Header */}
-      <h2 className="text-3xl font-extrabold mb-8 text-gray-800 flex items-center gap-3 z-10 relative">
+      {/* <h2 className="text-3xl font-extrabold mb-8 text-gray-800 flex items-center gap-3 z-10 relative">
         🍽️ Restro 9 to 9 Admin Dashboard
-      </h2>
+      </h2> */}
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 z-10 relative">
