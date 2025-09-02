@@ -31,9 +31,9 @@ function Sidebar({ className, toggleSidebar }) {
           <NavItem to="/admin/dashboard" label="Dashboard" icon={<MdDashboard size={20} />} onClick={toggleSidebar} />
         </NavSection>
 
-        <NavSection title="Products">
-          <NavItem to="adminProducts" label="All Products" icon={<FaBoxOpen size={20} />} onClick={toggleSidebar} />
-          <NavItem to="addProduct" label="Add Product" icon={<FaPlusSquare size={20} />} onClick={toggleSidebar} />
+        <NavSection title="Foods Management">
+          <NavItem to="/admin/adminFood" label="All Foods" icon={<FaBoxOpen size={20} />} onClick={toggleSidebar} />
+          <NavItem to="/admin/addFood" label="Add Food" icon={<FaPlusSquare size={20} />} onClick={toggleSidebar} />
           <NavItem to="categories" label="Categories" icon={<MdCategory size={20} />} onClick={toggleSidebar} />
         </NavSection>
 

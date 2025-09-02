@@ -10,7 +10,7 @@ import {
   CheckCircle2,
   Loader2,
 } from "lucide-react";
-import { useAuth } from "../context/AuthContext"; // ✅ Use custom hook
+import { useAuth } from "../../context/AuthContext"; // ✅ Use custom hook
 
 export default function Signin() {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
