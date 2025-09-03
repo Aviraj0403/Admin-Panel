@@ -29,10 +29,11 @@ export const getFood = async (foodId) => {
 };
 
 // Get all food items
-export const getAllFood = async () => {
-  const res = await Axios.get('/foods/getAllFood');
-  return res.data.foods; // or res.data depending on backend
+export const getAllFood = async (params = {}) => {
+  const res = await Axios.get('/foods/getAllFood', { params });
+  return res.data; // this includes: { success, foods, pagination }
 };
+
 
 // Get food by category
 export const getFoodByCategory = async (categoryId) => {

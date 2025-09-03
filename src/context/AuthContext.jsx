@@ -1,74 +1,61 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-} from "react";
-import axios from "../utils/Axios"; // ✅ Custom Axios instance
-import Cookies from "js-cookie";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { authMe, login as loginApi, logout as logoutApi } from "../services/authApi";
+// import { useQueryClient } from "@tanstack/react-query";
 
-// Create Context
+// Create the context
 const AuthContext = createContext(null);
 
-// ✅ Custom Hook for easy consumption
+// Hook for easier usage
 export const useAuth = () => useContext(AuthContext);
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  // const queryClient = useQueryClient();
 
-  // ✅ Check current session/token
-  const fetchUser = useCallback(async () => {
-    const token = Cookies.get("accessToken");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+  // Validate session on mount
+  useEffect(() => {
+    const validateSession = async () => {
+      try {
+        const res = await authMe(); // API call using Axios instance with credentials
+        setUser(res.data);    // Assuming response shape: { user }
+      } catch (err) {
+        console.warn("Session invalid or expired", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    try {
-      const res = await axios.get("/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUser(res.data.user);
-    } catch (error) {
-      console.error("Session fetch failed:", error);
-      logout(); // Clear tokens if session is invalid
-    } finally {
-      setLoading(false);
-    }
+    validateSession();
   }, []);
 
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
-
-  // ✅ Login Function
+  // Login
   const login = async (credentials) => {
     try {
-      const res = await axios.post("/auth/signIn", credentials);
-      const { userData, token } = res.data;
-
-      // Save tokens securely
-      Cookies.set("accessToken", token.accessToken, { secure: true, sameSite: 'Lax' });
-      Cookies.set("refreshToken", token.refreshToken, { secure: true, sameSite: 'Lax' });
-
-      setUser(userData);
+      await loginApi(credentials);        // Performs login + sets cookies
+      const res = await authMe();          // Get user after login
+      setUser(res.data);
       return { success: true };
     } catch (err) {
-      console.error("Login error:", err);
+      console.error("Login failed:", err);
       return {
         success: false,
-        message: err.response?.data?.message || "Login failed",
+        message: err?.response?.data?.message || "Login failed",
       };
     }
   };
 
-  // ✅ Logout Function
-  const logout = () => {
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
-    setUser(null);
+  // Logout
+  const logout = async () => {
+    try {
+      await logoutApi(); // Backend clears cookies
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      setUser(null);
+      queryClient.clear(); // Clear all cached queries (optional)
+    }
   };
 
   return (
