@@ -8,6 +8,10 @@ import ProtectedRoute from "./secureRoute/ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import AddFoodForm from "./pages/menu/AddFood";
 import AdminFood from "./pages/menu/AdminFood";
+import CategoryList from "./pages/category/CatgoryList";
+import AddCategoryForm from "./pages/category/AddCategoryForm";
+import EditCategory from "./pages/category/EditCategory";
+import ViewCategory from "./pages/category/ViewCatgory";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +45,22 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <HomePage/>
+      },
+      {
+        path: "categories",
+        element : <CategoryList />
+      },
+      {
+        path : "addCategory",
+        element : <AddCategoryForm />
+      },
+      {
+        path : "editCategory/:categoryId",
+        element : <EditCategory />
+      },
+      {
+        path : "viewCategory/:categoryId",
+        element : <ViewCategory />
       }
     ],
   },

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../utils/Axios";
-import { createFood}  from "../../services/FoodApi"
-import {getAllCategories} from "../../services/CategoryApi";
+import { createFood } from "../../services/FoodApi"
+import { getAllCategories } from "../../services/CategoryApi";
 import { toast } from "react-hot-toast";
 
 export default function AddFoodForm() {
@@ -35,14 +35,24 @@ export default function AddFoodForm() {
     useEffect(() => {
         async function fetchCategories() {
             try {
-                const res = await getAllCategories();
-                if (res.data.success && Array.isArray(res.data.categories)) {
-                    setCategories(res.data.categories);
-                } else throw new Error();
-            } catch {
+                const res = await getAllCategories({
+                    page: 1,
+                    limit: 100, // Fetch a reasonable amount of categories
+                    search: "",
+                    sortField: "name",
+                    sortOrder: 1,
+                });
+
+                if (res.success && Array.isArray(res.categories)) {
+                    setCategories(res.categories); // Set categories in the state
+                } else {
+                    throw new Error("Failed to fetch categories.");
+                }
+            } catch (err) {
                 toast.error("Failed to load categories.");
             }
         }
+
         fetchCategories();
     }, []);
 
@@ -195,7 +205,6 @@ export default function AddFoodForm() {
         }
     };
 
-
     const resetForm = () => {
         setFormData({
             name: "",
@@ -304,12 +313,16 @@ export default function AddFoodForm() {
                         <select
                             name="category"
                             value={formData.category}
+
                             onChange={handleChange}
                             required
                             className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         >
+                            console.log(formData.category); // This will show the current category value.
+
                             <option value="">Select Category</option>
                             {categories.map((cat) => (
+
                                 <option key={cat._id} value={cat._id}>
                                     {cat.name}
                                 </option>

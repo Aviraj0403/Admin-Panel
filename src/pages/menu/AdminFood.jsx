@@ -29,8 +29,6 @@ const AdminFood = () => {
         sortOrder,
       });
 
-      console.log("API response:", response); // Debug log
-
       if (response && response.success) {
         setFoods(response.foods || []);
         setPagination(response.pagination || {});
@@ -72,7 +70,6 @@ const AdminFood = () => {
     }
   };
 
-  // Optional: Sorting handler for table headers
   const handleSort = (field) => {
     if (sortField === field) {
       setSortOrder(sortOrder === 1 ? -1 : 1);
@@ -130,26 +127,25 @@ const AdminFood = () => {
             <table className="min-w-full bg-white border border-gray-200 divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  {[
-                    { label: "Image", field: null },
+                  {[{ label: "Image", field: null },
                     { label: "Name", field: "name" },
                     { label: "Category", field: "category" },
                     { label: "Price", field: "price" },
                     { label: "Variant", field: null },
                     { label: "Created At", field: "createdAt" },
-                    { label: "Action", field: null },
-                  ].map(({ label, field }) => (
-                    <th
-                      key={label}
-                      className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none"
-                      onClick={() => field && handleSort(field)}
-                    >
-                      {label}
-                      {field && sortField === field && (
-                        <span>{sortOrder === 1 ? " 🔼" : " 🔽"}</span>
-                      )}
-                    </th>
-                  ))}
+                    { label: "Action", field: null }]
+                    .map(({ label, field }) => (
+                      <th
+                        key={label}
+                        className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none"
+                        onClick={() => field && handleSort(field)}
+                      >
+                        {label}
+                        {field && sortField === field && (
+                          <span>{sortOrder === 1 ? " 🔼" : " 🔽"}</span>
+                        )}
+                      </th>
+                    ))}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -175,7 +171,7 @@ const AdminFood = () => {
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-900">{food.name}</td>
                       <td className="px-4 py-4 text-sm text-gray-900">
-                        {food.category || "N/A"}
+                        {food.category?.name || "N/A"}
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-900">
                         ₹{food.price ?? "N/A"}
@@ -240,7 +236,9 @@ const AdminFood = () => {
                       />
                       <div className="ml-4">
                         <p className="text-lg font-semibold text-gray-900">{food.name}</p>
-                        <p className="text-sm text-gray-500">{food.category || "No Category"}</p>
+                        <p className="text-sm text-gray-500">
+                          {food.category?.name || "No Category"}
+                        </p>
                       </div>
                     </div>
                     <div className="flex flex-col items-end space-y-2">

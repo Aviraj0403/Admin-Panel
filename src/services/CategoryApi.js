@@ -12,11 +12,32 @@ export const createCategory = async (formData) => {
   return res.data;
 };
 
-// Get All Categories
-export const getAllCategories = async () => {
-  const res = await Axios.get('/categories/getAllCategories');
-  return res.data.categories;
+
+export const getAllCategories = async ({ page, limit, search, sortField, sortOrder }) => {
+  try {
+    // Build the URL with query parameters
+    const res = await Axios.get('/categories/getAllCategories', {
+      params: {
+        page,
+        limit,
+        search,
+        sortField,
+        sortOrder
+      }
+    });
+
+    // Return both the categories and pagination data (if available)
+    return {
+      success: res.data.success,
+      categories: res.data.categories,
+      pagination: res.data.pagination || {}
+    };
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    throw new Error('Error fetching categories');
+  }
 };
+
 
 // Get Main Categories
 export const getMainCategories = async () => {
