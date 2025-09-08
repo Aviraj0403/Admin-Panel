@@ -43,10 +43,10 @@ export default function Signin() {
     const response = await login(credentials);
 
     if (response.success) {
-      setMessage({ type: "success", text: "Welcome! Redirecting..." });
+      setMessage({ type: "success", text: "Welcome! NineToNine..." });
 
       // Redirect after short delay
-      setTimeout(() => navigate("/admin/dashboard"), 1200); // You can make this dynamic based on role
+      setTimeout(() => navigate("/admin/dashboard"), 1000); // You can make this dynamic based on role
     } else {
       setMessage({
         type: "error",

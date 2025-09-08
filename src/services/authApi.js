@@ -88,3 +88,34 @@ export const refreshToken = async () => {
   const res = await Axios.post('/auth/refresh-token');
   return res.data;
 };
+
+
+// Fetch all customers
+export const getAllCustomers = async (page = 1, limit = 10) => {
+  const res = await Axios.get(`/users/customers`, { params: { page, limit } });
+  return res.data;
+};
+
+// Fetch all admins
+export const getAllAdmins = async (page = 1, limit = 10) => {
+  const res = await Axios.get(`/users/admins`, { params: { page, limit } });
+  return res.data;
+};
+
+// Fetch all delivery boys
+export const getAllDeliveryBoys = async (page = 1, limit = 10) => {
+  const res = await Axios.get(`/users/deliveryBoys`, { params: { page, limit } });
+  return res.data;
+};
+
+// Fetch all regular users
+export const getAllUsers = async (page = 1, limit = 10) => {
+  const res = await Axios.get(`/users/regular`, { params: { page, limit } });
+  return res.data;
+};
+
+// Fetch user details by userId
+export const getUserDetails = async (userId) => {
+  const res = await Axios.get(`/users/user/${userId}`);
+  return res.data;
+};

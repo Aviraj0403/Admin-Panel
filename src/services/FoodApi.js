@@ -11,9 +11,22 @@ export const createFood = async (formData) => {
 };
 
 // Update Food (PATCH)
-export const updateFood = async (foodId, data) => {
-  const res = await Axios.patch(`/foods/updateFood/${foodId}`, data);
-  return res.data;
+export const updateFood = async (foodId, formData) => {
+  try {
+    const res = await Axios.patch(
+      `/foods/updateFood/${foodId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Update Food Error:", error);
+    return { success: false, message: error.response?.data?.message || "Error updating food" };
+  }
 };
 
 // Delete Food
@@ -22,16 +35,20 @@ export const deleteFood = async (foodId) => {
   return res.data;
 };
 
-// Get one food by ID
 export const getFood = async (foodId) => {
   const res = await Axios.get(`/foods/getFood/${foodId}`);
-  return res.data.food; // or res.data depending on your controller
+  return res.data;  // Assuming res.data contains { success: true, food: {...} }
 };
 
 // Get all food items
 export const getAllFood = async (params = {}) => {
-  const res = await Axios.get('/foods/getAllFood', { params });
-  return res.data; // this includes: { success, foods, pagination }
+  try {
+    const res = await Axios.get('/foods/getAllFood', { params });
+    return res.data; // this includes: { success, foods, pagination }
+  } catch (error) {
+    console.error('Error fetching food data:', error);
+    throw error; // Rethrow the error to handle it in the component
+  }
 };
 
 

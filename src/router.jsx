@@ -12,6 +12,9 @@ import CategoryList from "./pages/category/CatgoryList";
 import AddCategoryForm from "./pages/category/AddCategoryForm";
 import EditCategory from "./pages/category/EditCategory";
 import ViewCategory from "./pages/category/ViewCatgory";
+import EditFood from "./pages/menu/EditFood";
+import FoodView from "./pages/menu/FoodView";
+import TotalUserOnWeb from "./pages/users/TotalUserOnWeb";
 
 const router = createBrowserRouter([
   {
@@ -35,12 +38,24 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
+         path: "users",
+         element : < TotalUserOnWeb />,
+      },
+      {
         path:"addFood",
         element: <AddFoodForm/>
       },
       {
           path:"adminFood",
           element: < AdminFood />
+      },
+      {
+          path:"editFood/:foodId",
+          element: <EditFood />
+      },
+      {
+           path:"food-details/:foodId",
+           element: <FoodView />
       },
       {
         path: "home",

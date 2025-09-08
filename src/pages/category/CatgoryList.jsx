@@ -126,9 +126,10 @@ const CategoryList = () => {
             ) : (
                 <>
                     {/* Desktop Table */}
-                    <div className="hidden md:block">
-                        <table className="min-w-full bg-white border border-gray-200 divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                    {/* Desktop Table */}
+                    <div className="hidden md:block overflow-x-auto rounded-xl shadow-lg border border-gray-200">
+                        <table className="min-w-full bg-white">
+                            <thead className="bg-gradient-to-r from-orange-100 to-orange-200">
                                 <tr>
                                     {[{ label: "Image", field: null },
                                     { label: "Name", field: "name" },
@@ -139,66 +140,79 @@ const CategoryList = () => {
                                     ].map(({ label, field }) => (
                                         <th
                                             key={label}
-                                            className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none"
+                                            className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wide cursor-pointer select-none"
                                             onClick={() => field && handleSort(field)}
                                         >
-                                            {label}
-                                            {field && sortField === field && (
-                                                <span>{sortOrder === 1 ? " 🔼" : " 🔽"}</span>
-                                            )}
+                                            <div className="flex items-center space-x-1">
+                                                <span>{label}</span>
+                                                {field && sortField === field && (
+                                                    <span className="text-xs">{sortOrder === 1 ? "🔼" : "🔽"}</span>
+                                                )}
+                                            </div>
                                         </th>
                                     ))}
                                 </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="divide-y divide-gray-100">
                                 {categories && categories.length === 0 ? (
                                     <tr>
-                                        <td colSpan="6" className="text-center py-4 text-gray-600">
+                                        <td colSpan="6" className="text-center py-6 text-gray-600">
                                             No categories available.
                                         </td>
                                     </tr>
                                 ) : (
-                                    categories.map((category) => (
-                                        <tr key={category._id}>
-                                            <td className="px-4 py-4 text-sm font-medium text-gray-900">
+                                    categories.map((category, idx) => (
+                                        <tr
+                                            key={category._id}
+                                            className={`hover:bg-orange-50 transition ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                                                }`}
+                                        >
+                                            <td className="px-6 py-4 text-sm text-gray-900">
                                                 <img
                                                     src={category.image[0]}
                                                     alt={category.name}
-                                                    className="w-16 h-16 object-cover rounded-full mx-auto"
+                                                    className="w-14 h-14 object-cover rounded-lg shadow-md border border-gray-200"
                                                 />
                                             </td>
-                                            <td className="px-4 py-4 text-sm text-gray-900">{category.name}</td>
-                                            <td className="px-4 py-4 text-sm text-gray-900">{category.displayOrder}</td>
-                                            <td className="px-4 py-4 text-sm text-gray-900">
+                                            <td className="px-6 py-4 text-sm font-medium text-gray-800">
+                                                {category.name}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm text-gray-700">
+                                                {category.displayOrder}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm">
                                                 <span
-                                                    className={`font-semibold ${category.isActive ? 'text-green-500' : 'text-red-500'}`}
+                                                    className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${category.isActive
+                                                        ? "bg-green-100 text-green-600 border border-green-200"
+                                                        : "bg-red-100 text-red-600 border border-red-200"
+                                                        }`}
                                                 >
-                                                    {category.isActive ? 'Active' : 'Inactive'}
+                                                    {category.isActive ? "Active" : "Inactive"}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-4 text-sm text-gray-900">
+                                            <td className="px-6 py-4 text-sm text-gray-600">
                                                 {category.createdAt
                                                     ? new Date(category.createdAt).toLocaleDateString()
                                                     : "N/A"}
                                             </td>
-                                            <td className="px-4 py-4 text-sm font-medium flex space-x-3 justify-center">
+                                            <td className="px-6 py-4 text-sm flex space-x-4 justify-center">
                                                 <NavLink
                                                     to={`/admin/editCategory/${category._id}`}
-                                                    className="text-blue-600 hover:text-blue-800"
+                                                    className="text-blue-600 hover:text-blue-800 transition transform hover:scale-110"
                                                 >
-                                                    <FaEdit />
+                                                    <FaEdit size={18} />
                                                 </NavLink>
                                                 <NavLink
                                                     to={`/admin/viewCategory/${category._id}`}
-                                                    className="text-gray-600 hover:text-gray-800 transition"
+                                                    className="text-gray-600 hover:text-gray-800 transition transform hover:scale-110"
                                                 >
-                                                    <FaEye />
+                                                    <FaEye size={18} />
                                                 </NavLink>
                                                 <button
                                                     onClick={() => handleDeleteCategory(category._id)}
-                                                    className="text-red-600 hover:text-red-800"
+                                                    className="text-red-600 hover:text-red-800 transition transform hover:scale-110"
                                                 >
-                                                    <FaTrashAlt />
+                                                    <FaTrashAlt size={18} />
                                                 </button>
                                             </td>
                                         </tr>
@@ -207,6 +221,7 @@ const CategoryList = () => {
                             </tbody>
                         </table>
                     </div>
+
 
                     {/* Mobile View */}
                     <div className="block md:hidden">

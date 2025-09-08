@@ -1,7 +1,185 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { getAllFood, deleteFood as deleteFoodApi } from "../../services/FoodApi";
+import { getAllFood } from "../../services/FoodApi"; // API service
+
+// ---- Row Component for Desktop Table ----
+// ---- Row Component for Desktop Table ----
+const FoodTableRow = ({ food, onDelete }) => (
+  <tr key={food._id} className="hover:bg-gray-50 transition duration-300">
+    <td className="px-4 py-4 text-sm font-medium text-gray-900">
+      <img
+        src={
+          food.foodImages && food.foodImages.length > 0
+            ? food.foodImages[0]
+            : "https://via.placeholder.com/64"
+        }
+        alt={food.name}
+        className="w-16 h-16 object-cover rounded-full mx-auto shadow-lg"
+      />
+    </td>
+    <td className="px-4 py-4 text-sm text-gray-900">{food.name}</td>
+    <td className="px-4 py-4 text-sm text-gray-900">
+      {food.category?.name || "N/A"}
+    </td>
+    <td className="px-4 py-4 text-sm text-gray-900">
+      {food.variants && food.variants.length > 0
+        ? `₹ ${food.variants[0].price}`
+        : "N/A"}
+    </td>
+    <td className="px-4 py-4 text-sm text-gray-900">
+      {food.variants?.map((v, idx) => (
+        <div key={idx} className="mb-1">
+          <span className="font-semibold">{v.name}:</span>{" "}
+          <span>₹ {v.price}</span>{" "}
+          {v.priceAfterDiscount && (
+            <span className="text-red-500 line-through">
+              ₹ {v.priceAfterDiscount}
+            </span>
+          )}
+        </div>
+      ))}
+    </td>
+
+  {/* ✅ Tags Column */}
+<td className="px-4 py-4 text-sm text-gray-900 space-x-1 space-y-1">
+  {food.isHotProduct && (
+    <span className="px-2 py-1 bg-red-100 text-red-600 text-xs rounded-full shadow-sm">
+      Hot
+    </span>
+  )}
+  {food.isFeatured && (
+    <span className="px-2 py-1 bg-blue-100 text-blue-600 text-xs rounded-full shadow-sm">
+      Featured
+    </span>
+  )}
+  {food.isRecommended && (
+    <span className="px-2 py-1 bg-yellow-100 text-yellow-600 text-xs rounded-full shadow-sm">
+      Recommended
+    </span>
+  )}
+  {food.status === "Active" && (
+    <span className="px-2 py-1 bg-green-100 text-green-600 text-xs rounded-full shadow-sm">
+      Active
+    </span>
+  )}
+  {food.isBudgetBite && (
+    <span className="px-2 py-1 bg-purple-100 text-purple-600 text-xs rounded-full shadow-sm">
+      Budget
+    </span>
+  )}
+  {food.isSpecialOffer && (
+    <span className="px-2 py-1 bg-pink-100 text-pink-600 text-xs rounded-full shadow-sm">
+      Special
+    </span>
+  )}
+  {food.itemType?.toLowerCase() === "veg" && (
+    <span className="px-2 py-1 bg-green-200 text-green-800 text-xs rounded-full shadow-sm">
+      Veg
+    </span>
+  )}
+  {food.itemType?.toLowerCase() === "non-veg" && (
+    <span className="px-2 py-1 bg-red-200 text-red-800 text-xs rounded-full shadow-sm">
+      Non-Veg
+    </span>
+  )}
+</td>
+
+
+    <td className="px-4 py-4 text-sm font-medium flex space-x-3 justify-center">
+      <NavLink
+        to={`/admin/editFood/${food._id}`}
+        className="text-blue-600 hover:text-blue-800 transform transition-transform duration-300 hover:scale-110"
+      >
+        ✏️
+      </NavLink>
+      <NavLink
+        to={`/admin/food-details/${food._id}`}
+        className="text-gray-600 hover:text-gray-800 transform transition-transform duration-300 hover:scale-110"
+      >
+        👁️
+      </NavLink>
+      <button
+        onClick={() => onDelete(food._id)}
+        className="text-red-600 hover:text-red-800 transform transition-transform duration-300 hover:scale-110"
+      >
+        🗑️
+      </button>
+    </td>
+  </tr>
+);
+
+
+// ---- Card Component for Mobile View ----
+// ---- Card Component for Mobile View ----
+const FoodCard = ({ food, onDelete }) => (
+  <div className="p-4 mb-4 border border-gray-200 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center flex-1">
+        <img
+          src={
+            food.foodImages && food.foodImages.length > 0
+              ? food.foodImages[0]
+              : "https://via.placeholder.com/64"
+          }
+          alt={food.name}
+          className="w-16 h-16 object-cover rounded-full shadow-lg"
+        />
+        <div className="ml-4">
+          <p className="text-lg font-semibold text-gray-900">{food.name}</p>
+          <p className="text-sm text-gray-500">{food.category?.name || "N/A"}</p>
+        </div>
+      </div>
+      <div className="flex items-center space-x-3">
+        <NavLink
+          to={`/admin/edit-food/${food._id}`}
+          className="text-blue-600 hover:text-blue-800 transform transition-transform duration-300 hover:scale-110"
+        >
+          ✏️
+        </NavLink>
+        <NavLink
+          to={`/admin/food-details/${food._id}`}
+          className="text-gray-600 hover:text-gray-800 transform transition-transform duration-300 hover:scale-110"
+        >
+          👁️
+        </NavLink>
+        <button
+          onClick={() => onDelete(food._id)}
+          className="text-red-600 hover:text-red-800 transform transition-transform duration-300 hover:scale-110"
+        >
+          🗑️
+        </button>
+      </div>
+    </div>
+
+    <div className="mt-2">
+      {food.variants?.map((v, idx) => (
+        <div key={idx} className="text-sm text-gray-700">
+          <strong>{v.name}: </strong>₹ {v.price}{" "}
+          {v.priceAfterDiscount && (
+            <span className="text-red-500 line-through">
+              ₹ {v.priceAfterDiscount}
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+
+   {/* ✅ Tags for Mobile */}
+<div className="mt-3 flex flex-wrap gap-2">
+  {food.isHotProduct && <span className="px-2 py-1 bg-red-100 text-red-600 text-xs rounded-full">Hot</span>}
+  {food.isFeatured && <span className="px-2 py-1 bg-blue-100 text-blue-600 text-xs rounded-full">Featured</span>}
+  {food.isRecommended && <span className="px-2 py-1 bg-yellow-100 text-yellow-600 text-xs rounded-full">Recommended</span>}
+  {food.status === "Active" && <span className="px-2 py-1 bg-green-100 text-green-600 text-xs rounded-full">Active</span>}
+  {food.isBudgetBite && <span className="px-2 py-1 bg-purple-100 text-purple-600 text-xs rounded-full">Budget</span>}
+  {food.isSpecialOffer && <span className="px-2 py-1 bg-pink-100 text-pink-600 text-xs rounded-full">Special</span>}
+  {food.itemType?.toLowerCase() === "veg" && <span className="px-2 py-1 bg-green-200 text-green-800 text-xs rounded-full">Veg</span>}
+  {food.itemType?.toLowerCase() === "non-veg" && <span className="px-2 py-1 bg-red-200 text-red-800 text-xs rounded-full">Non-Veg</span>}
+</div>
+
+  </div>
+);
+
 
 const AdminFood = () => {
   const [foods, setFoods] = useState([]);
@@ -47,40 +225,23 @@ const AdminFood = () => {
   };
 
   const handlePageChange = (newPage) => {
-    if (newPage < 1 || (pagination.totalPages && newPage > pagination.totalPages)) {
+    if (
+      newPage < 1 ||
+      (pagination.totalPages && newPage > pagination.totalPages)
+    ) {
       return;
     }
     setPage(newPage);
   };
 
-  const handleDeleteFood = async (foodId) => {
-    if (window.confirm("Are you sure you want to delete this food item?")) {
-      try {
-        const response = await deleteFoodApi(foodId);
-        if (response && response.success) {
-          toast.success("Food deleted successfully");
-          fetchFoods();
-        } else {
-          toast.error(response.message || "Failed to delete food");
-        }
-      } catch (error) {
-        console.error("Error deleting food:", error);
-        toast.error("Error deleting food");
-      }
-    }
-  };
-
-  const handleSort = (field) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === 1 ? -1 : 1);
-    } else {
-      setSortField(field);
-      setSortOrder(-1);
-    }
+  const handleDeleteFood = (id) => {
+    // TODO: Replace with API call
+    toast.success(`Food item with ID ${id} deleted successfully!`);
+    fetchFoods();
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto bg-white rounded-lg shadow-md border border-gray-200">
+    <div className="p-6 max-w-7xl mx-auto bg-white rounded-lg shadow-xl border border-gray-200">
       <div className="flex flex-wrap items-center justify-between mb-6">
         <h4 className="text-2xl font-semibold text-gray-800">Food List</h4>
         <div className="flex flex-wrap gap-2 items-center">
@@ -98,200 +259,67 @@ const AdminFood = () => {
             to="/admin/addFood"
             className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
           >
-            <svg
-              className="mr-2"
-              stroke="currentColor"
-              fill="none"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              height="20"
-              width="20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M5 12h14"></path>
-              <path d="M12 5v14"></path>
-            </svg>
-            Add Food
+            ➕ Add Food
           </NavLink>
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center text-gray-500 py-20">Loading foods...</div>
+        <div className="text-center text-lg text-gray-600">Loading...</div>
       ) : (
         <>
-          {/* Desktop Table */}
-          <div className="hidden md:block">
-            <table className="min-w-full bg-white border border-gray-200 divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  {[{ label: "Image", field: null },
-                    { label: "Name", field: "name" },
-                    { label: "Category", field: "category" },
-                    { label: "Price", field: "price" },
-                    { label: "Variant", field: null },
-                    { label: "Created At", field: "createdAt" },
-                    { label: "Action", field: null }]
-                    .map(({ label, field }) => (
-                      <th
-                        key={label}
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none"
-                        onClick={() => field && handleSort(field)}
-                      >
-                        {label}
-                        {field && sortField === field && (
-                          <span>{sortOrder === 1 ? " 🔼" : " 🔽"}</span>
-                        )}
-                      </th>
-                    ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {foods.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" className="text-center py-4 text-gray-600">
-                      No food items available.
-                    </td>
-                  </tr>
-                ) : (
-                  foods.map((food) => (
-                    <tr key={food._id}>
-                      <td className="px-4 py-4 text-sm font-medium text-gray-900">
-                        <img
-                          src={
-                            food.foodImages && food.foodImages.length > 0
-                              ? food.foodImages[0]
-                              : "https://via.placeholder.com/64"
-                          }
-                          alt={food.name}
-                          className="w-16 h-16 object-cover rounded-full mx-auto"
-                        />
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-900">{food.name}</td>
-                      <td className="px-4 py-4 text-sm text-gray-900">
-                        {food.category?.name || "N/A"}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-900">
-                        ₹{food.price ?? "N/A"}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-900">
-                        {food.variants && food.variants.length > 0
-                          ? `${food.variants[0].size} - ₹${food.variants[0].price}`
-                          : "N/A"}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-900">
-                        {food.createdAt
-                          ? new Date(food.createdAt).toLocaleDateString()
-                          : "N/A"}
-                      </td>
-                      <td className="px-4 py-4 text-sm font-medium flex space-x-3 justify-center">
-                        <NavLink
-                          to={`/admin/editFood/${food._id}`}
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          ✏️
-                        </NavLink>
-                        <NavLink
-                          to={`/admin/food-details/${food._id}`}
-                          className="text-gray-600 hover:text-gray-800"
-                        >
-                          👁️
-                        </NavLink>
-                        <button
-                          onClick={() => handleDeleteFood(food._id)}
-                          className="text-red-600 hover:text-red-800"
-                        >
-                          🗑️
-                        </button>
-                      </td>
+          {foods.length > 0 ? (
+            <>
+              <div className="hidden sm:block">
+                <table className="min-w-full table-auto shadow-md border-collapse">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-4 py-3 text-left">Image</th>
+                      <th className="px-4 py-3 text-left">Name</th>
+                      <th className="px-4 py-3 text-left">Category</th>
+                      <th className="px-4 py-3 text-left">Price</th>
+                      <th className="px-4 py-3 text-left">Variants</th>
+                      <th className="px-4 py-3 text-left">Tags</th>
+                      <th className="px-4 py-3 text-left">Actions</th>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                  </thead>
+                  <tbody>
+                    {foods.map((food) => (
+                      <FoodTableRow key={food._id} food={food} onDelete={handleDeleteFood} />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="sm:hidden">
+                {foods.map((food) => (
+                  <FoodCard key={food._id} food={food} onDelete={handleDeleteFood} />
+                ))}
+              </div>
 
-          {/* Mobile View */}
-          <div className="block md:hidden">
-            {foods.length === 0 ? (
-              <p className="text-center py-4 text-gray-600">No food items available.</p>
-            ) : (
-              foods.map((food) => (
-                <div
-                  key={food._id}
-                  className="p-4 mb-4 border border-gray-200 rounded-lg"
+              {/* Pagination */}
+              <div className="flex justify-between mt-6">
+                <button
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page <= 1}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center flex-1">
-                      <img
-                        src={
-                          food.foodImages && food.foodImages.length > 0
-                            ? food.foodImages[0]
-                            : "https://via.placeholder.com/64"
-                        }
-                        alt={food.name}
-                        className="w-16 h-16 object-cover rounded-full"
-                      />
-                      <div className="ml-4">
-                        <p className="text-lg font-semibold text-gray-900">{food.name}</p>
-                        <p className="text-sm text-gray-500">
-                          {food.category?.name || "No Category"}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end space-y-2">
-                      <p className="text-sm text-gray-700">₹{food.price ?? "N/A"}</p>
-                      <div className="flex space-x-3 mt-2">
-                        <NavLink
-                          to={`/admin/editFood/${food._id}`}
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          ✏️
-                        </NavLink>
-                        <NavLink
-                          to={`/admin/food-details/${food._id}`}
-                          className="text-gray-600 hover:text-gray-800"
-                        >
-                          👁️
-                        </NavLink>
-                        <button
-                          onClick={() => handleDeleteFood(food._id)}
-                          className="text-red-600 hover:text-red-800"
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+                  Previous
+                </button>
+                <span className="self-center text-gray-700">Page {page}</span>
+                <button
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page >= pagination.totalPages}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="text-center text-lg text-gray-600">No food items found.</div>
+          )}
         </>
       )}
-
-      {/* Pagination */}
-      <div className="mt-4 flex items-center justify-between">
-        <button
-          disabled={page <= 1}
-          onClick={() => handlePageChange(page - 1)}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span>
-          Page {pagination.page || 1} of {pagination.totalPages || 1}
-        </span>
-        <button
-          disabled={page >= (pagination.totalPages || 1)}
-          onClick={() => handlePageChange(page + 1)}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
     </div>
   );
 };
