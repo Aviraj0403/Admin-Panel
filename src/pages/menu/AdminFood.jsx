@@ -132,10 +132,10 @@ const FoodCard = ({ food, onDelete }) => (
       </div>
       <div className="flex items-center space-x-3">
         <NavLink
-          to={`/admin/edit-food/${food._id}`}
+          to={`/admin/editFood/${food._id}`}
           className="text-blue-600 hover:text-blue-800 transform transition-transform duration-300 hover:scale-110"
         >
-          ✏️
+          ✏️ 
         </NavLink>
         <NavLink
           to={`/admin/food-details/${food._id}`}
