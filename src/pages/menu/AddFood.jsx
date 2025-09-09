@@ -273,7 +273,7 @@ export default function AddFoodForm() {
                                     htmlFor="food-image-upload"
                                     className="bg-orange-500 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-orange-600 transition"
                                 >
-                                    Upload Images (Max 3)
+                                    Upload Image
                                 </label>
                             </div>
                         )}
