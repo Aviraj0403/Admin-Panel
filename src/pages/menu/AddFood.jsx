@@ -186,9 +186,10 @@ export default function AddFoodForm() {
 
             if (data.success) {
                 toast.success("Food item created successfully!", {
-                    style: { background: "#f97316", color: "#fff" },
+                    style: { background: "#f97316", color: "#a9b8deff" },
                 });
                 resetForm();
+                navigate("/adminFood");
             } else {
                 toast.error(data.message || "Failed to create food item.", {
                     style: { background: "#f97316", color: "#fff" },
@@ -420,44 +421,49 @@ export default function AddFoodForm() {
                         onChange={handleChange}
                         placeholder="e.g., 15"
                     />
-                    {/* Item Type Dropdown */}
-                    <div>
-                        <label htmlFor="itemType" className="block text-sm font-medium text-gray-700 mb-1">
-                            Item Type *
-                        </label>
-                        <select
-                            name="itemType"
-                            id="itemType"
-                            value={formData.itemType}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white"
-                            required
-                        >
-                            {/* <option value="">-- Select Item Type --</option> */}
-                            <option value="Veg">Veg</option>
-                            <option value="Non-Veg">Non-Veg</option>
-                        </select>
-                    </div>
+     {/* Item Type Dropdown */}
+<div>
+  <label htmlFor="itemType" className="block text-sm font-medium text-gray-700 mb-1">
+    Item Type *
+  </label>
+  <select
+    name="itemType"
+    id="itemType"
+    value={formData.itemType}
+    onChange={handleChange}
+    className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white"
+    required
+  >
+    <option value="" disabled>
+      -- Select Item Type --
+    </option>
+    <option value="Veg">Veg</option>
+    <option value="Non-Veg">Non-Veg</option>
+  </select>
+</div>
 
-                    {/* Variety Dropdown */}
-                    <div>
-                        <label htmlFor="variety" className="block text-sm font-medium text-gray-700 mb-1">
-                            Variety *
-                        </label>
-                        <select
-                            name="variety"
-                            id="variety"
-                            value={formData.variety}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white"
-                            required
-                        >
-                            {/* <option value="">-- Select Variety --</option> */}
-                            <option value="Breakfast">Breakfast</option>
-                            <option value="Lunch">Lunch</option>
-                            <option value="Dinner">Dinner</option>
-                        </select>
-                    </div>
+{/* Variety Dropdown */}
+<div>
+  <label htmlFor="variety" className="block text-sm font-medium text-gray-700 mb-1">
+    Variety *
+  </label>
+  <select
+    name="variety"
+    id="variety"
+    value={formData.variety}
+    onChange={handleChange}
+    className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white"
+    required
+  >
+    <option value="" disabled>
+      -- Select Variety --
+    </option>
+    <option value="Breakfast">Breakfast</option>
+    <option value="Lunch">Lunch</option>
+    <option value="Dinner">Dinner</option>
+  </select>
+</div>
+
 
 
                     <InputField
