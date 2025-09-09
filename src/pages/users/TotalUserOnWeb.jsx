@@ -7,7 +7,6 @@ import {
   getUserDetails,
 } from "../../services/authApi";
 import { FaUserCircle, FaGoogle } from "react-icons/fa";
-import { TailSpin } from "react-loader-spinner";
 
 const TotalUserOnWeb = () => {
   const [users, setUsers] = useState([]);
@@ -74,12 +73,7 @@ const TotalUserOnWeb = () => {
         </select>
       </div>
 
-      {/* Loader & Errors */}
-      {loading && (
-        <div className="flex justify-center my-12">
-          <TailSpin height="50" width="50" color="#6366f1" />
-        </div>
-      )}
+      {/* Errors */}
       {error && <p className="text-red-600 text-center">{error}</p>}
 
       {/* Users Grid */}
