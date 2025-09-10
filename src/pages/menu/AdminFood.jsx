@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { getAllFood } from "../../services/FoodApi"; // API service
+import { getAllFood , deleteFood} from "../../services/FoodApi"; // API service
 
 // ---- Row Component for Desktop Table ----
 // ---- Row Component for Desktop Table ----
@@ -22,7 +22,7 @@ const FoodTableRow = ({ food, onDelete }) => (
     <td className="px-4 py-4 text-sm text-gray-900">
       {food.category?.name || "N/A"}
     </td>
-    <td className="px-4 py-4 text-sm text-gray-900">
+       <td className="px-4 py-4 text-sm text-gray-900">
       {food.variants && food.variants.length > 0
         ? `₹ ${food.variants[0].price}`
         : "N/A"}
@@ -30,7 +30,7 @@ const FoodTableRow = ({ food, onDelete }) => (
     <td className="px-4 py-4 text-sm text-gray-900">
       {food.variants?.map((v, idx) => (
         <div key={idx} className="mb-1">
-          <span className="font-semibold">{v.name}:</span>{" "}
+          <span className="font-semibold">{v.size}:</span>{" "}
           <span>₹ {v.price}</span>{" "}
           {v.priceAfterDiscount && (
             <span className="text-red-500 line-through">
@@ -155,7 +155,7 @@ const FoodCard = ({ food, onDelete }) => (
     <div className="mt-2">
       {food.variants?.map((v, idx) => (
         <div key={idx} className="text-sm text-gray-700">
-          <strong>{v.name}: </strong>₹ {v.price}{" "}
+          <strong>{v.size}: </strong>₹ {v.price}{" "}
           {v.priceAfterDiscount && (
             <span className="text-red-500 line-through">
               ₹ {v.priceAfterDiscount}
@@ -234,10 +234,20 @@ const AdminFood = () => {
     setPage(newPage);
   };
 
-  const handleDeleteFood = (id) => {
-    // TODO: Replace with API call
-    toast.success(`Food item with ID ${id} deleted successfully!`);
-    fetchFoods();
+ const handleDeleteFood = async (id) => {
+    try {
+      // Call the delete API directly
+      const response = await deleteFood(id);
+      if (response.success) {
+        toast.success(`Food item with ID ${id} deleted successfully!`);
+        fetchFoods(); // Refresh the food list after deletion
+      } else {
+        toast.error("Failed to delete food item.");
+      }
+    } catch (error) {
+      console.error("Error deleting food:", error);
+      toast.error("An error occurred while deleting the food item.");
+    }
   };
 
   return (

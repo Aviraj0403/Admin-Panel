@@ -7,6 +7,7 @@ import {
   getUserDetails,
 } from "../../services/authApi";
 import { FaUserCircle, FaGoogle } from "react-icons/fa";
+import { AiOutlineLoading3Quarters } from "react-icons/ai"; // For loading icon
 
 const TotalUserOnWeb = () => {
   const [users, setUsers] = useState([]);
@@ -78,75 +79,84 @@ const TotalUserOnWeb = () => {
 
       {/* Users Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {users.map((user) => (
-          <div
-            key={user._id}
-            className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2 hover:scale-105 cursor-pointer border border-gray-100"
-            onClick={() => handleUserClick(user._id)}
-          >
-            <div className="flex items-center space-x-4">
-              <FaUserCircle className="text-gray-500 text-6xl drop-shadow-sm" />
-              <div className="flex-1">
-                <p className="text-lg font-semibold text-gray-800 flex items-center">
-                  {user.userName}
-                  {user.firebaseUid && (
-                    <FaGoogle
-                      className="ml-2 text-blue-500"
-                      title="Google Account"
-                    />
-                  )}
-                </p>
-                <p className="text-sm text-gray-500">{user.email}</p>
-                <span
-                  className={`mt-2 inline-block px-3 py-1 text-xs font-medium rounded-full ${
-                    user.isVerified
-                      ? "bg-green-100 text-green-600"
-                      : "bg-red-100 text-red-600"
-                  }`}
-                >
-                  {user.isVerified ? "Verified ✅" : "Not Verified ❌"}
-                </span>
+        {loading ? (
+          <div className="w-full h-72 flex justify-center items-center text-gray-600">
+            <AiOutlineLoading3Quarters className="animate-spin text-4xl" />
+          </div>
+        ) : (
+          users.map((user) => (
+            <div
+              key={user._id}
+              className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2 hover:scale-105 cursor-pointer border border-gray-100"
+              onClick={() => handleUserClick(user._id)}
+            >
+              <div className="flex items-center space-x-4">
+                <FaUserCircle className="text-gray-500 text-6xl drop-shadow-sm" />
+                <div className="flex-1">
+                  <p className="text-lg font-semibold text-gray-800 flex items-center">
+                    {user.userName}
+                    {user.firebaseUid && (
+                      <FaGoogle className="ml-2 text-blue-500" title="Google Account" />
+                    )}
+                  </p>
+                  <p className="text-sm text-gray-500">{user.email}</p>
+                  <span
+                    className={`mt-2 inline-block px-3 py-1 text-xs font-medium rounded-full ${
+                      user.isVerified ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+                    }`}
+                  >
+                    {user.isVerified ? "Verified ✅" : "Not Verified ❌"}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
-      {/* User Details Panel */}
+      {/* User Details Modal */}
       {selectedUser && (
-        <div className="mt-12 p-8 bg-white border-2 border-gray-200 rounded-2xl shadow-xl max-w-3xl mx-auto">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6">
-            👤 User Details
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
-            <div>
-              <p className="font-semibold">Full Name:</p>
-              <p>{selectedUser.userName}</p>
-            </div>
-            <div>
-              <p className="font-semibold">Email:</p>
-              <p>{selectedUser.email}</p>
-            </div>
-            <div>
-              <p className="font-semibold">Phone:</p>
-              <p>{selectedUser.phoneNumber || "N/A"}</p>
-            </div>
-            <div>
-              <p className="font-semibold">Role:</p>
-              <p>{selectedUser.roleType}</p>
-            </div>
-            <div>
-              <p className="font-semibold">Verified:</p>
-              <p>{selectedUser.isVerified ? "Yes ✅" : "No ❌"}</p>
-            </div>
-            {selectedUser.firebaseId && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full">
+            <h3 className="text-2xl font-bold text-gray-800 mb-6">👤 User Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
               <div>
-                <p className="font-semibold">Login Type:</p>
-                <span className="inline-flex items-center px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm">
-                  <FaGoogle className="mr-2" /> Google Account
-                </span>
+                <p className="font-semibold">Full Name:</p>
+                <p>{selectedUser.userName}</p>
               </div>
-            )}
+              <div>
+                <p className="font-semibold">Email:</p>
+                <p>{selectedUser.email}</p>
+              </div>
+              <div>
+                <p className="font-semibold">Phone:</p>
+                <p>{selectedUser.phoneNumber || "N/A"}</p>
+              </div>
+              <div>
+                <p className="font-semibold">Role:</p>
+                <p>{selectedUser.roleType}</p>
+              </div>
+              <div>
+                <p className="font-semibold">Verified:</p>
+                <p>{selectedUser.isVerified ? "Yes ✅" : "No ❌"}</p>
+              </div>
+              {selectedUser.firebaseId && (
+                <div>
+                  <p className="font-semibold">Login Type:</p>
+                  <span className="inline-flex items-center px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm">
+                    <FaGoogle className="mr-2" /> Google Account
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Close Button */}
+            <button
+              className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all"
+              onClick={() => setSelectedUser(null)}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

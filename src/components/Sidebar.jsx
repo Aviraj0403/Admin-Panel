@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaBoxOpen,
   FaPlusSquare,
@@ -9,11 +9,26 @@ import {
   FaChartBar,
 } from "react-icons/fa";
 import { MdDashboard, MdCategory } from "react-icons/md";
+import { IoMdLogOut } from "react-icons/io";
+import { useAuth } from "../context/AuthContext.jsx"; // Importing context for authentication
 
 function Sidebar({ className, toggleSidebar }) {
+  const { user, logout, loading } = useAuth(); // Access user state and logout from context
+  const navigate = useNavigate(); // Navigation hook for redirecting after logout
+
+  // Handle logout logic
+  const handleLogout = async () => {
+    try {
+      await logout(); // Call logout function from context
+      navigate("/signin"); // Redirect to signin page after logout
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
   return (
     <aside
-      className={`${className} backdrop-blur-md text-gray-800 p-4 h-[89vh] mt-[10vh] overflow-y-scroll`}
+      className={`${className} backdrop-blur-md text-gray-800 p-4 h-[89vh] mt-[10vh] overflow-y-scroll transition-transform duration-300 ease-in-out`}
     >
       {/* Close on mobile */}
       <div className="relative lg:hidden">
@@ -23,6 +38,18 @@ function Sidebar({ className, toggleSidebar }) {
         >
           ✕
         </button>
+      </div>
+
+      {/* Profile Section */}
+      <div className="flex items-center mb-8 space-x-4">
+        <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
+          {/* Profile Icon */}
+          <FaUsers className="text-white text-2xl" />
+        </div>
+        <div>
+          <p className="font-semibold text-gray-800">{user?.userName || "User"}</p>
+          <p className="text-sm text-gray-500">{user?.email || "user@domain.com"}</p>
+        </div>
       </div>
 
       {/* Navigation */}
@@ -51,8 +78,19 @@ function Sidebar({ className, toggleSidebar }) {
 
         <NavSection title="Reports">
           <NavItem to="sales-report" label="Sales Report" icon={<FaChartBar size={20} />} onClick={toggleSidebar} />
-          <NavItem to="inventory-report" label="Inventory Report" icon={<FaChartBar size={20} />} onClick={toggleSidebar} />
+          <NavItem to="PaymentDetails" label="Payment Detail" icon={<FaChartBar size={20} />} onClick={toggleSidebar} />
         </NavSection>
+
+        {/* Logout Section */}
+        <div className="mt-6">
+          <button
+            onClick={handleLogout}
+            className="flex items-center text-red-600 hover:bg-red-100 rounded-md p-2 w-full text-left"
+          >
+            <IoMdLogOut size={20} />
+            <span className="ml-3">Logout</span>
+          </button>
+        </div>
       </div>
     </aside>
   );
@@ -60,8 +98,8 @@ function Sidebar({ className, toggleSidebar }) {
 
 // Helper Components
 const NavSection = ({ title, children }) => (
-  <div className="mb-2">
-    <h2 className="uppercase text-sm text-gray-400 px-2 mb-1">{title}</h2>
+  <div className="mb-4">
+    <h2 className="uppercase text-xs text-gray-400 px-2 mb-2">{title}</h2>
     <div className="flex flex-col">{children}</div>
   </div>
 );
@@ -71,14 +109,15 @@ const NavItem = ({ to, label, icon, onClick }) => (
     to={to}
     onClick={onClick}
     className={({ isActive }) =>
-      `mb-1 px-4 py-2 rounded-md flex items-center gap-2 ${
+      `mb-2 px-4 py-2 rounded-md flex items-center gap-3 text-sm ${
         isActive
-          ? "bg-gray-200 text-orange-400"
-          : "hover:bg-gray-200 text-gray-700"
+          ? "bg-orange-100 text-orange-600" // Active color for current page
+          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900" // Hover effect for other items
       }`
     }
   >
-    {icon} {label}
+    {icon}
+    <span>{label}</span>
   </NavLink>
 );
 
