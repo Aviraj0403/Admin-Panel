@@ -79,9 +79,25 @@ export const uploadAvatar = async (file) => {
 
 // Authenticated User Info (from /me)
 export const authMe = async () => {
-  const res = await Axios.get('/auth/me');
-  return res.data;
+  try {
+    const res = await Axios.get('/auth/me'); // No need to pass withCredentials here
+    return res.data; // Assuming the response contains user data
+  } catch (err) {
+    console.error("Error fetching user info:", err);
+    if (err.response) {
+      if (err.response.status === 401) {
+        throw new Error("Session expired or unauthorized. Please log in again.");
+      } else {
+        throw new Error(`Server error: ${err.response.status}`);
+      }
+    } else if (err.request) {
+      throw new Error("Network error. Please check your connection.");
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
+  }
 };
+
 
 // Refresh Token
 export const refreshToken = async () => {
