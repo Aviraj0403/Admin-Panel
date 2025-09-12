@@ -51,6 +51,16 @@ export const getAllFood = async (params = {}) => {
   }
 };
 
+export const getAdminFood = async (params = {}) => {
+  try {
+    const res = await Axios.get('/foods/getAdminFood', { params });
+    return res.data; // this includes: { success, foods, pagination }
+  } catch (error) {
+    console.error('Error fetching food data:', error);
+    throw error; // Rethrow the error to handle it in the component
+  }
+};
+
 
 // Get food by category
 export const getFoodByCategory = async (categoryId) => {

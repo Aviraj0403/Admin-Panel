@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { getAllFood , deleteFood} from "../../services/FoodApi"; // API service
+import { getAdminFood , deleteFood} from "../../services/FoodApi"; // API service
 
 // ---- Row Component for Desktop Table ----
 // ---- Row Component for Desktop Table ----
@@ -199,7 +199,7 @@ const AdminFood = () => {
   const fetchFoods = async () => {
     setLoading(true);
     try {
-      const response = await getAllFood({
+      const response = await getAdminFood({
         page,
         limit,
         search: searchTerm,

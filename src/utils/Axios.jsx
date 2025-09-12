@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const baseURL = "https://restro-back-jgry.onrender.com/v1/api"; // Production
-// const baseURL = "http://localhost:5005/v1/api"; // Local development
+// const baseURL = "https://restro-back-jgry.onrender.com/v1/api"; // Production
+const baseURL = "http://localhost:5005/v1/api"; // Local development
 const Axios = axios.create({
   baseURL,
   withCredentials: true, // send cookies
