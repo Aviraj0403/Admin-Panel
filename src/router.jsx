@@ -14,6 +14,7 @@ import EditCategory from "./pages/category/EditCategory";
 import ViewCategory from "./pages/category/ViewCatgory";
 import EditFood from "./pages/menu/EditFood";
 import FoodView from "./pages/menu/FoodView";
+import OffersList from "./pages/offers/OffersList";
 import TotalUserOnWeb from "./pages/users/TotalUserOnWeb";
 
 const router = createBrowserRouter([
@@ -76,6 +77,10 @@ const router = createBrowserRouter([
       {
         path : "viewCategory/:categoryId",
         element : <ViewCategory />
+      },
+      {
+        path: "offers",
+        element: < OffersList />,
       }
     ],
   },
