@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import SalesChart from "../pages/report/SalesChart";  // Import the SalesChart component
 
 export default function Dashboard() {
   return (
@@ -8,9 +9,9 @@ export default function Dashboard() {
       <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-72 h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
 
       {/* Header */}
-      {/* <h2 className="text-3xl font-extrabold mb-8 text-gray-800 flex items-center gap-3 z-10 relative">
+      <h2 className="text-3xl font-extrabold mb-8 text-gray-800 flex items-center gap-3 z-10 relative">
         🍽️ Restro 9 to 9 Admin Dashboard
-      </h2> */}
+      </h2>
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 z-10 relative">
@@ -60,6 +61,14 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
+
+      {/* Sales Chart Section (imported) */}
+      <section className="z-10 relative mb-12">
+        <h3 className="text-xl font-semibold mb-6 text-gray-800">Sales Trends</h3>
+        <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 transform transition hover:scale-105">
+          <SalesChart />
+        </div>
+      </section>
     </div>
   );
 }
@@ -82,8 +91,7 @@ const DashboardCard = ({ title, value, color }) => {
   return (
     <div className="relative bg-white rounded-2xl p-6 shadow-lg overflow-hidden transform transition hover:scale-105">
       <div
-        className={`absolute -top-10 -right-10 w-32 h-32 ${circleColorMap[color]} rounded-full mix-blend-multiply filter blur-2xl`}
-      ></div>
+        className={`absolute -top-10 -right-10 w-32 h-32 ${circleColorMap[color]} rounded-full mix-blend-multiply filter blur-2xl`}></div>
       <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
       <p className={`text-3xl font-bold mt-4 ${colorMap[color]}`}>{value}</p>
     </div>

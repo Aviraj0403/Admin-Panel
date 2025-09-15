@@ -6,22 +6,24 @@ import './index.css';
 import { Provider } from 'react-redux';
 import { store, persistor } from './store/Store';
 import { PersistGate } from 'redux-persist/integration/react';
-
+import EB from './pages/PNF/EB.jsx';
 // ✅ Import your AuthProvider
 import AuthProvider from './context/AuthContext';
-import  WindowContextProvider  from './context/windowContext.jsx';
+import WindowContextProvider from './context/windowContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     {/* ✅ Wrap App inside AuthProvider */}
-    <Provider store={store}>
+    <EB>
+      <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-    <AuthProvider>
-      <WindowContextProvider>
-      <App />
-       </WindowContextProvider>
-    </AuthProvider>
-    </PersistGate>
+          <AuthProvider>
+            <WindowContextProvider>
+              <App />
+            </WindowContextProvider>
+          </AuthProvider>
+        </PersistGate>
       </Provider>
+    </EB>
   </StrictMode>
 );

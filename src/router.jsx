@@ -16,6 +16,8 @@ import EditFood from "./pages/menu/EditFood";
 import FoodView from "./pages/menu/FoodView";
 import OffersList from "./pages/offers/OffersList";
 import TotalUserOnWeb from "./pages/users/TotalUserOnWeb";
+import NotFoundPage from './pages/PNF/NotFoundPage';
+import SalesReport from "./pages/report/SaleDash";
 
 const router = createBrowserRouter([
   {
@@ -81,6 +83,14 @@ const router = createBrowserRouter([
       {
         path: "offers",
         element: < OffersList />,
+      },
+      {
+        path: "sales-report",
+        element: <SalesReport />, // redirect /admin to /admin/dashboard
+      },
+      {
+        path: "orders",
+        element: <Navigate to="/admin/dashboard" replace />, // redirect /admin to /admin/dashboard
       }
     ],
   },
@@ -90,7 +100,7 @@ const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <p>404 Not Found</p>,
+    element: <NotFoundPage />,
   },
 ]);
 

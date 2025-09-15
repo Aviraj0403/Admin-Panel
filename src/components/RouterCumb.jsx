@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useLocation, useNavigate, Navigate } from "react-router-dom";
 import { FaChevronRight } from "react-icons/fa";
 
 // Optional: Friendly label map
@@ -21,7 +21,35 @@ const isDynamicSegment = (str) =>
 
 const RouterCumb = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const paths = location.pathname.split("/").filter((path) => path);
+
+  useEffect(() => {
+    // Check if the route exists (this could be based on your routing structure)
+    const isValidRoute = checkRouteValidity(location.pathname);
+    
+    // If the route is invalid, redirect to /admin/dashboard
+    if (!isValidRoute) {
+      const lastValidPath = sessionStorage.getItem("lastValidPath") || "/admin/dashboard"; // Default to /admin/dashboard if no valid path exists
+      navigate(lastValidPath, { replace: true });
+    } else {
+      // Store the current path as the last valid path
+      sessionStorage.setItem("lastValidPath", location.pathname);
+    }
+  }, [location.pathname, navigate]);
+
+  // A helper function to check if the route exists
+  const checkRouteValidity = (path) => {
+    // You could implement a more sophisticated check here based on your routes.
+    // For now, it simply returns true if the path matches any segment in labelMap.
+    return Object.keys(labelMap).some((key) => path.includes(key));
+  };
+
+  // If the route is invalid and we need to redirect
+  const isValidRoute = checkRouteValidity(location.pathname);
+  if (!isValidRoute) {
+    return <Navigate to="/admin/dashboard" replace />;  // Redirect to /admin/dashboard if route is invalid
+  }
 
   if (paths.length === 0) return null;
 
