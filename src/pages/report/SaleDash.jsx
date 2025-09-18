@@ -62,7 +62,10 @@ const SalesReport = () => {
               <Legend />
               <Bar dataKey="sales" fill="#00d084">
                 {salesDataWeekly.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#00d084" : "#ffd700"} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={index % 2 === 0 ? "#00d084" : "#ffd700"}
+                  />
                 ))}
               </Bar>
             </BarChart>
@@ -105,7 +108,7 @@ const SalesReport = () => {
 
   return (
     <div className="container mx-auto p-8">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
+      <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">
         Restaurant Sales Report
       </h1>
 
@@ -114,9 +117,9 @@ const SalesReport = () => {
           onClick={() => setView("monthly")}
           className={`${
             view === "monthly"
-              ? "bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg shadow-indigo-500/50 text-white"
+              ? "bg-gradient-to-r from-blue-500 to-indigo-600 shadow-xl text-white"
               : "bg-gray-200 text-gray-700"
-          } px-6 py-3 m-2 rounded-lg transform transition-all hover:scale-105 hover:shadow-xl focus:outline-none`}
+          } px-6 py-3 m-2 rounded-lg transform transition-all hover:scale-110 hover:shadow-2xl focus:outline-none`}
         >
           Monthly View
         </button>
@@ -124,9 +127,9 @@ const SalesReport = () => {
           onClick={() => setView("weekly")}
           className={`${
             view === "weekly"
-              ? "bg-gradient-to-r from-green-400 to-teal-500 shadow-lg shadow-teal-500/50 text-white"
+              ? "bg-gradient-to-r from-green-400 to-teal-500 shadow-xl text-white"
               : "bg-gray-200 text-gray-700"
-          } px-6 py-3 m-2 rounded-lg transform transition-all hover:scale-105 hover:shadow-xl focus:outline-none`}
+          } px-6 py-3 m-2 rounded-lg transform transition-all hover:scale-110 hover:shadow-2xl focus:outline-none`}
         >
           Weekly View
         </button>
@@ -134,20 +137,37 @@ const SalesReport = () => {
           onClick={() => setView("itemized")}
           className={`${
             view === "itemized"
-              ? "bg-gradient-to-r from-yellow-400 to-orange-500 shadow-lg shadow-orange-500/50 text-white"
+              ? "bg-gradient-to-r from-yellow-400 to-orange-500 shadow-xl text-white"
               : "bg-gray-200 text-gray-700"
-          } px-6 py-3 m-2 rounded-lg transform transition-all hover:scale-105 hover:shadow-xl focus:outline-none`}
+          } px-6 py-3 m-2 rounded-lg transform transition-all hover:scale-110 hover:shadow-2xl focus:outline-none`}
         >
           Itemized Sales
         </button>
       </div>
 
-      {renderChart()}
+      {/* Chart Display Area */}
+      <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
+        <div className="transform transition-all hover:scale-105">{renderChart()}</div>
+      </div>
 
       <div className="mt-8 text-center">
-        <h3 className="text-2xl font-semibold text-gray-700">Insights</h3>
+        <h3 className="text-2xl font-semibold text-gray-700">Key Insights</h3>
         <p className="text-gray-600 mt-2">
-          Explore your restaurant's sales data across different time periods or by the individual items sold.
+          This report presents your restaurant's sales data across various time periods. Use the buttons above to switch between monthly, weekly, or itemized sales views.
+        </p>
+      </div>
+
+      <div className="mt-8 text-center">
+        <h3 className="text-xl font-semibold text-gray-700">Sales Trends</h3>
+        <p className="text-gray-600 mt-2">
+          The charts represent the trends in your restaurant's sales. The Monthly View gives an overview of year-round sales, the Weekly View shows sales per week, and the Itemized Sales section breaks down sales per menu item. 
+        </p>
+      </div>
+
+      <div className="mt-8 text-center">
+        <h3 className="text-xl font-semibold text-gray-700">Actionable Insights</h3>
+        <p className="text-gray-600 mt-2">
+          Use these insights to optimize your menu and marketing strategies. For example, if certain items are consistently performing well, you may want to promote them further. Conversely, if some items are underperforming, consider offering discounts or revising their recipes.
         </p>
       </div>
     </div>

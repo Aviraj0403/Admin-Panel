@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import SalesChart from "../pages/report/SalesChart";  // Import the SalesChart component
 
 export default function Dashboard() {
   return (
-    <div className="flex flex-col h-full min-h-screen bg-gray-50 p-4 sm:p-6 md:p-8 overflow-auto relative">
+    <div className="flex flex-col h-full min-h-screen bg-gray-50 p-4 sm:p-6 md:p-8 overflow-hidden relative">
       {/* Decorative background circles */}
-      <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
-      <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-72 h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
+      <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-pink-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
+      <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-60 h-60 bg-yellow-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
 
       {/* Header */}
       <h2 className="text-3xl font-extrabold mb-8 text-gray-800 flex items-center gap-3 z-10 relative">
@@ -91,7 +91,7 @@ const DashboardCard = ({ title, value, color }) => {
   return (
     <div className="relative bg-white rounded-2xl p-6 shadow-lg overflow-hidden transform transition hover:scale-105">
       <div
-        className={`absolute -top-10 -right-10 w-32 h-32 ${circleColorMap[color]} rounded-full mix-blend-multiply filter blur-2xl`}></div>
+        className={`absolute -top-10 -right-10 w-24 h-24 ${circleColorMap[color]} rounded-full mix-blend-multiply filter blur-2xl`}></div>
       <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
       <p className={`text-3xl font-bold mt-4 ${colorMap[color]}`}>{value}</p>
     </div>
