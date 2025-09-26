@@ -28,14 +28,17 @@ const AdminLayout = () => {
       <ToastContainer />
 
       {/* Sidebar */}
-      <Sidebar
-        className={`
-          lg:fixed absolute top-0 left-0 z-30 w-64 h-full bg-white 
-          transition-transform duration-300 ease-in-out 
-          ${openSidebar ? "translate-x-0" : "-translate-x-full"}
-        `}
-        toggleSidebar={toggleSidebar}
-      />
+  <Sidebar
+  className={`
+    lg:fixed absolute left-0 z-30 w-64 bg-white 
+    top-[10vh]
+    transition-transform duration-300 ease-in-out 
+    ${openSidebar ? "translate-x-0" : "-translate-x-full"}
+  `}
+  toggleSidebar={toggleSidebar}
+/>
+
+
 
       {/* Main content area */}
       <div
