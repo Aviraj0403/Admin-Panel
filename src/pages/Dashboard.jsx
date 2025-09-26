@@ -5,7 +5,7 @@ import axios from "../utils/Axios";
 export default function Dashboard() {
   const [orders, setOrders] = useState([]);
   const [socket, setSocket] = useState(null);
-  const socketURL = "http://localhost:5005";
+  const socketURL = "https://restro-back-jgry.onrender.com" ||"http://localhost:5005";
 
   // 🔗 Setup socket connection and reconnect logic
   useEffect(() => {
