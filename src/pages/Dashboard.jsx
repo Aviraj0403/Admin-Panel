@@ -2,10 +2,19 @@ import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import SalesChart from "../pages/report/SalesChart";
 import axios from "../utils/Axios";
+import useNotification from "../hooks/useNotification"; // 🔔 hook import
+
 export default function Dashboard() {
   const [orders, setOrders] = useState([]);
   const [socket, setSocket] = useState(null);
-  const socketURL = "https://restro-back-jgry.onrender.com" ||"http://localhost:5005";
+
+  // 🔔 custom hook
+  const { notification, notify, clearNotification } = useNotification();
+
+  const socketURL =
+    import.meta.env.VITE_NODE_ENV === "development"
+      ? "http://localhost:5005"
+      : "wss://restro-back-jgry.onrender.com";
 
   // 🔗 Setup socket connection and reconnect logic
   useEffect(() => {
@@ -14,43 +23,56 @@ export default function Dashboard() {
     });
     setSocket(socket);
 
-    // Fetch existing orders on page load (for lost socket or after refresh)
+    // Fetch existing orders on page load
     fetchOrders();
 
     // Listen for new orders via WebSocket
     socket.on("newOrder", (order) => {
       console.log("📦 New order received: ", order);
       setOrders((prevOrders) => [order, ...prevOrders]); // new order on top
+
+      // 🔔 trigger notification with sound
+      notify(`New order received from ${order?.user?.name || "Customer"}`);
     });
 
-    // Handle socket reconnection
     socket.on("connect", () => {
       console.log("📡 Reconnected to the WebSocket server");
     });
 
-    // Cleanup socket on unmount
     return () => {
       socket.disconnect();
     };
   }, []);
 
   // Fetch orders from the server
-const fetchOrders = async () => {
-  try {
-    const response = await axios.get("/orders/reports/today");
-    
-    if (response.status === 200) {
-      setOrders(response.data.orders); // Set fetched orders into state
-    } else {
-      console.error("Failed to fetch orders:", response.data.message);
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get("/orders/reports/today");
+      if (response.status === 200) {
+        setOrders(response.data.orders);
+      } else {
+        console.error("Failed to fetch orders:", response.data.message);
+      }
+    } catch (err) {
+      console.error("Error fetching orders:", err);
     }
-  } catch (err) {
-    console.error("Error fetching orders:", err);
-  }
-};
+  };
 
   return (
     <div className="flex flex-col h-full min-h-screen bg-gray-50 p-4 sm:p-6 md:p-8 overflow-hidden relative">
+      {/* 🔔 Floating notification */}
+      {notification && (
+        <div className="fixed top-5 right-5 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-bounce">
+          {notification}
+          <button
+            onClick={clearNotification}
+            className="ml-3 text-sm underline"
+          >
+            x
+          </button>
+        </div>
+      )}
+
       {/* Background Circles */}
       <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-pink-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
       <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-60 h-60 bg-yellow-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
@@ -63,14 +85,20 @@ const fetchOrders = async () => {
       {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 z-10 relative">
         <DashboardCard title="Total Revenue" value="₹92,800" color="green" />
-        <DashboardCard title="Today's Orders" value={orders.length} color="blue" />
+        <DashboardCard
+          title="Today's Orders"
+          value={orders.length}
+          color="blue"
+        />
         <DashboardCard title="Dishes Available" value="56" color="orange" />
         <DashboardCard title="Customers Served" value="980" color="purple" />
       </div>
 
       {/* Today’s Orders */}
       <section className="z-10 relative">
-        <h3 className="text-xl font-semibold mb-6 text-gray-800">Today’s Orders</h3>
+        <h3 className="text-xl font-semibold mb-6 text-gray-800">
+          Today’s Orders
+        </h3>
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {orders.length > 0 ? (
             orders.map((order) => (
@@ -93,9 +121,7 @@ const fetchOrders = async () => {
                 {/* Order ID */}
                 <p className="text-sm text-gray-600 mb-2">
                   Order ID:{" "}
-                  <span className="font-mono">
-                    {order?._id || "NA"}
-                  </span>
+                  <span className="font-mono">{order?._id || "NA"}</span>
                 </p>
 
                 {/* Payment Method */}
@@ -143,7 +169,9 @@ const fetchOrders = async () => {
 
       {/* Sales Chart */}
       <section className="z-10 relative mb-12">
-        <h3 className="text-xl font-semibold mb-6 text-gray-800">Sales Trends</h3>
+        <h3 className="text-xl font-semibold mb-6 text-gray-800">
+          Sales Trends
+        </h3>
         <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 transform transition hover:scale-105">
           <SalesChart />
         </div>
