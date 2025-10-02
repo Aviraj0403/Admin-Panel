@@ -18,7 +18,7 @@ import OffersList from "./pages/offers/OffersList";
 import TotalUserOnWeb from "./pages/users/TotalUserOnWeb";
 import NotFoundPage from './pages/PNF/NotFoundPage';
 import SalesReport from "./pages/report/SaleDash";
-
+import AdminOrderManager from "./pages/orders/AdminOrderManager"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -88,10 +88,7 @@ const router = createBrowserRouter([
         path: "sales-report",
         element: <SalesReport />, // redirect /admin to /admin/dashboard
       },
-      {
-        path: "orders",
-        element: <Navigate to="/admin/dashboard" replace />, // redirect /admin to /admin/dashboard
-      }
+      { path: "orders", element: <AdminOrderManager /> },
     ],
   },
   {

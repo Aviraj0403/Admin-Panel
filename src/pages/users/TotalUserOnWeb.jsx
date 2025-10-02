@@ -1,46 +1,47 @@
-import React, { useEffect, useState } from "react";
-import {
-  getAllCustomers,
-  getAllAdmins,
-  getAllDeliveryBoys,
-  getAllUsers,
-  getUserDetails,
-} from "../../services/authApi";
-import { FaUserCircle, FaGoogle } from "react-icons/fa";
-import { AiOutlineLoading3Quarters } from "react-icons/ai"; // For loading icon
+import React, { useEffect, useState, useCallback } from "react";
+import { getAllCustomers, getAllAdmins, getAllDeliveryBoys, getAllUsers, getUserDetails } from "../../services/authApi";
+import { FaUserCircle, FaGoogle, FaEdit, FaTrashAlt, FaEye, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { toast } from "react-hot-toast";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const TotalUserOnWeb = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [role, setRole] = useState("customer");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10; // Users per page
 
-  // Fetch users by role
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      try {
-        let data;
-        if (role === "customer") {
-          data = await getAllCustomers(1, 12);
-        } else if (role === "admin") {
-          data = await getAllAdmins(1, 12);
-        } else if (role === "deliveryBoy") {
-          data = await getAllDeliveryBoys(1, 12);
-        } else if (role === "regular") {
-          data = await getAllUsers(1, 12);
-        }
-        setUsers(data.data || []);
-      } catch (err) {
-        setError("Failed to fetch users");
-      } finally {
-        setLoading(false);
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      let response;
+      if (role === "customer") {
+        response = await getAllCustomers(page, limit, search);
+      } else if (role === "admin") {
+        response = await getAllAdmins(page, limit, search);
+      } else if (role === "deliveryBoy") {
+        response = await getAllDeliveryBoys(page, limit, search);
+      } else if (role === "regular") {
+        response = await getAllUsers(page, limit, search);
       }
-    };
+      setUsers(response?.data || []);
+      setTotalPages(response?.pagination?.totalPages || 1);
+    } catch (err) {
+      setError("Failed to fetch users");
+      toast.error("Failed to fetch users");
+    } finally {
+      setLoading(false);
+    }
+  }, [role, page, search]);
 
+  useEffect(() => {
     fetchUsers();
-  }, [role]);
+  }, [fetchUsers]);
 
   const handleUserClick = async (userId) => {
     setLoading(true);
@@ -48,115 +49,291 @@ const TotalUserOnWeb = () => {
       const data = await getUserDetails(userId);
       setSelectedUser(data.data);
     } catch (err) {
-      setError("Failed to fetch user details");
+      toast.error("Failed to fetch user details");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleRoleChange = (e) => {
+    setRole(e.target.value);
+    setPage(1);
+    setSearch("");
+  };
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPage(1);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  // Placeholder for edit, delete, verify actions
+  const handleEditUser = (userId) => {
+    toast.info(`Edit user ${userId} (implement functionality)`);
+  };
+
+  const handleDeleteUser = (userId) => {
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      toast.success(`User ${userId} deleted (implement functionality)`);
+      fetchUsers();
+    }
+  };
+
+  const handleVerifyUser = (userId) => {
+    toast.success(`User ${userId} verified (implement functionality)`);
+    fetchUsers();
+  };
+
   return (
-    <div className="p-8 max-w-7xl mx-auto bg-gradient-to-br from-white to-gray-100 rounded-3xl shadow-2xl border border-gray-200">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center drop-shadow-md">
-        👥 Users Management
-      </h2>
-
-      {/* Role Filter */}
-      <div className="mb-8 flex justify-center">
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="border px-5 py-3 rounded-xl text-lg font-medium shadow-lg focus:outline-none focus:ring-4 focus:ring-indigo-400"
-        >
-          <option value="customer">Customers</option>
-          <option value="admin">Admins</option>
-          <option value="deliveryBoy">Delivery Boys</option>
-          <option value="regular">Regular Users</option>
-        </select>
+    <div className="p-6 max-w-7xl mx-auto bg-white rounded-lg shadow-md border border-gray-200">
+      <div className="flex flex-wrap items-center justify-between mb-6">
+        <h4 className="text-2xl font-semibold text-gray-800">User Management</h4>
+        <div className="flex flex-wrap gap-2 items-center">
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={search}
+            onChange={handleSearchChange}
+            className="border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+          <select
+            value={role}
+            onChange={handleRoleChange}
+            className="border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          >
+            <option value="customer">Customers</option>
+            <option value="admin">Admins</option>
+            <option value="deliveryBoy">Delivery Boys</option>
+            <option value="regular">Regular Users</option>
+          </select>
+        </div>
       </div>
 
-      {/* Errors */}
-      {error && <p className="text-red-600 text-center">{error}</p>}
+      {error && <p className="text-red-600 text-center mb-4">{error}</p>}
 
-      {/* Users Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {loading ? (
-          <div className="w-full h-72 flex justify-center items-center text-gray-600">
-            <AiOutlineLoading3Quarters className="animate-spin text-4xl" />
+      {loading ? (
+        <div className="text-center text-gray-500 py-20">Loading users...</div>
+      ) : (
+        <>
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto rounded-xl shadow-lg border border-gray-200">
+            <table className="min-w-full bg-white">
+              <thead className="bg-gradient-to-r from-orange-100 to-orange-200">
+                <tr>
+                  {["Name", "Email", "Phone", "Role", "Verified", "Actions"].map((label) => (
+                    <th
+                      key={label}
+                      className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wide"
+                    >
+                      {label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {users.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-6 text-gray-600">
+                      No users found.
+                    </td>
+                  </tr>
+                ) : (
+                  users.map((user, idx) => (
+                    <tr
+                      key={user._id}
+                      className={`hover:bg-orange-50 transition ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
+                    >
+                      <td className="px-6 py-4 text-sm text-gray-900 flex items-center space-x-2">
+                        <FaUserCircle className="text-gray-500 text-xl" />
+                        <span>{user.userName}</span>
+                        {user.firebaseUid && <FaGoogle className="text-blue-500" title="Google Account" />}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{user.email}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{user.phoneNumber || "N/A"}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{user.roleType}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                            user.isVerified
+                              ? "bg-green-100 text-green-600 border border-green-200"
+                              : "bg-red-100 text-red-600 border border-red-200"
+                          }`}
+                        >
+                          {user.isVerified ? "Verified" : "Not Verified"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm flex space-x-4 justify-center">
+                        <button
+                          onClick={() => handleUserClick(user._id)}
+                          className="text-gray-600 hover:text-gray-800 transition transform hover:scale-110"
+                        >
+                          <FaEye size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleEditUser(user._id)}
+                          className="text-blue-600 hover:text-blue-800 transition transform hover:scale-110"
+                        >
+                          <FaEdit size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user._id)}
+                          className="text-red-600 hover:text-red-800 transition transform hover:scale-110"
+                        >
+                          <FaTrashAlt size={18} />
+                        </button>
+                        {!user.isVerified && (
+                          <button
+                            onClick={() => handleVerifyUser(user._id)}
+                            className="text-green-600 hover:text-green-800 transition transform hover:scale-110"
+                          >
+                            <FaCheckCircle size={18} />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
-        ) : (
-          users.map((user) => (
-            <div
-              key={user._id}
-              className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2 hover:scale-105 cursor-pointer border border-gray-100"
-              onClick={() => handleUserClick(user._id)}
-            >
-              <div className="flex items-center space-x-4">
-                <FaUserCircle className="text-gray-500 text-6xl drop-shadow-sm" />
-                <div className="flex-1">
-                  <p className="text-lg font-semibold text-gray-800 flex items-center">
-                    {user.userName}
-                    {user.firebaseUid && (
-                      <FaGoogle className="ml-2 text-blue-500" title="Google Account" />
-                    )}
-                  </p>
-                  <p className="text-sm text-gray-500">{user.email}</p>
-                  <span
-                    className={`mt-2 inline-block px-3 py-1 text-xs font-medium rounded-full ${
-                      user.isVerified ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
-                    }`}
-                  >
-                    {user.isVerified ? "Verified ✅" : "Not Verified ❌"}
-                  </span>
+
+          {/* Mobile View */}
+          <div className="block md:hidden">
+            {users.length === 0 ? (
+              <p className="text-center py-4 text-gray-600">No users found.</p>
+            ) : (
+              users.map((user) => (
+                <div key={user._id} className="p-4 mb-4 border border-gray-200 rounded-lg shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <FaUserCircle className="text-gray-500 text-xl" />
+                        <p className="text-lg font-semibold text-gray-900">{user.userName}</p>
+                        {user.firebaseUid && <FaGoogle className="text-blue-500" />}
+                      </div>
+                      <p className="text-sm text-gray-600">Email: {user.email}</p>
+                      <p className="text-sm text-gray-600">Phone: {user.phoneNumber || "N/A"}</p>
+                      <p className="text-sm text-gray-600">Role: {user.roleType}</p>
+                      <span
+                        className={`mt-2 inline-block px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                          user.isVerified
+                            ? "bg-green-100 text-green-600 border border-green-200"
+                            : "bg-red-100 text-red-600 border border-red-200"
+                        }`}
+                      >
+                        {user.isVerified ? "Verified" : "Not Verified"}
+                      </span>
+                    </div>
+                    <div className="flex flex-col items-end space-y-2">
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => handleUserClick(user._id)}
+                          className="text-gray-600 hover:text-gray-800 transition transform hover:scale-110"
+                        >
+                          <FaEye size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleEditUser(user._id)}
+                          className="text-blue-600 hover:text-blue-800 transition transform hover:scale-110"
+                        >
+                          <FaEdit size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user._id)}
+                          className="text-red-600 hover:text-red-800 transition transform hover:scale-110"
+                        >
+                          <FaTrashAlt size={18} />
+                        </button>
+                        {!user.isVerified && (
+                          <button
+                            onClick={() => handleVerifyUser(user._id)}
+                            className="text-green-600 hover:text-green-800 transition transform hover:scale-110"
+                          >
+                            <FaCheckCircle size={18} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))
+            )}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-4 flex items-center justify-between">
+              <button
+                disabled={page <= 1}
+                onClick={() => handlePageChange(page - 1)}
+                className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <span>Page {page} of {totalPages}</span>
+              <button
+                disabled={page >= totalPages}
+                onClick={() => handlePageChange(page + 1)}
+                className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+              >
+                <ChevronRight size={20} />
+              </button>
             </div>
-          ))
-        )}
-      </div>
+          )}
+        </>
+      )}
 
       {/* User Details Modal */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full">
-            <h3 className="text-2xl font-bold text-gray-800 mb-6">👤 User Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
-              <div>
-                <p className="font-semibold">Full Name:</p>
-                <p>{selectedUser.userName}</p>
-              </div>
-              <div>
-                <p className="font-semibold">Email:</p>
-                <p>{selectedUser.email}</p>
-              </div>
-              <div>
-                <p className="font-semibold">Phone:</p>
-                <p>{selectedUser.phoneNumber || "N/A"}</p>
-              </div>
-              <div>
-                <p className="font-semibold">Role:</p>
-                <p>{selectedUser.roleType}</p>
-              </div>
-              <div>
-                <p className="font-semibold">Verified:</p>
-                <p>{selectedUser.isVerified ? "Yes ✅" : "No ❌"}</p>
-              </div>
-              {selectedUser.firebaseId && (
-                <div>
-                  <p className="font-semibold">Login Type:</p>
-                  <span className="inline-flex items-center px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm">
-                    <FaGoogle className="mr-2" /> Google Account
-                  </span>
-                </div>
-              )}
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold text-gray-800">User Details</h3>
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="text-gray-600 hover:text-gray-800 transition transform hover:scale-110"
+              >
+                <FaTimesCircle size={20} />
+              </button>
             </div>
-
-            {/* Close Button */}
-            <button
-              className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all"
-              onClick={() => setSelectedUser(null)}
-            >
-              Close
-            </button>
+            <div className="space-y-4 text-sm text-gray-700">
+              <div className="flex items-center space-x-2">
+                <FaUserCircle className="text-gray-500 text-xl" />
+                <p className="font-medium">Name: {selectedUser.userName}</p>
+                {selectedUser.firebaseUid && <FaGoogle className="text-blue-500" />}
+              </div>
+              <p>Email: {selectedUser.email}</p>
+              <p>Phone: {selectedUser.phoneNumber || "N/A"}</p>
+              <p>Role: {selectedUser.roleType}</p>
+              <span
+                className={`inline-block px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                  selectedUser.isVerified
+                    ? "bg-green-100 text-green-600 border border-green-200"
+                    : "bg-red-100 text-red-600 border border-red-200"
+                }`}
+              >
+                {selectedUser.isVerified ? "Verified" : "Not Verified"}
+              </span>
+            </div>
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                onClick={() => handleEditUser(selectedUser._id)}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
